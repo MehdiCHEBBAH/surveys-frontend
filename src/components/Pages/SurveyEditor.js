@@ -1,17 +1,23 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import axios from 'axios';
+import { FaArrowLeft, FaPlus, FaTimes } from 'react-icons/fa';
+import { useNavigate } from "react-router-dom";
 
 import NavBar from '../NavBar';
-import { FaArrowLeft, FaPlus, FaTimes } from 'react-icons/fa';
 import SectionEditor from '../SectionEditor';
 
+/**************** Global Vars ****************/
+const {BACKEND_HOST} = require('../../config.json')
 function SurveyEditor(props) {
+    const navigate = useNavigate();
+
     const [survey, setSurvey] = useState({
         "title": "",
         "description": "",
         "questions": [
             {
-                "title": " dasd asda ",
+                "title": "",
                 "questions": [""]
             },
         ]
@@ -56,7 +62,7 @@ function SurveyEditor(props) {
         setSurvey({...new_survey})
     }
 
-    const submit = () => {
+    const submit = async () => {
         if(survey.title == ''){
             alert("You have to provide a title for the survey.");
             return
@@ -80,7 +86,14 @@ function SurveyEditor(props) {
             })
         })
 
-        console.log(survey);
+        try{
+            let data = await axios.post(`${BACKEND_HOST}/api/v0/surveys`, survey);
+            data = await data.data;
+            navigate(`/survey/${data.ID}`);
+        }catch(err){
+            alert("An internal error just happened!!");
+            return
+        }
     }
     /****************************************************************/
 
