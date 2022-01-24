@@ -12,7 +12,7 @@ function NavBar({onSubmit, resultsId}) {
             </div>
             <div>
                 <button type="button" onClick={onSubmit} className="px-10 mx-5 bg-gradient-to-tr from-blue-600 to-indigo-600 text-indigo-100 py-2 rounded-md text-lg tracking-wide">Send</button>
-                {resultsId !== ""? (<Link to="/results"><button className="px-10 mx-5 bg-gradient-to-tr from-green-600 to-green-900 text-indigo-100 py-2 rounded-md text-lg tracking-wide">Results</button></Link>): ""}
+                {resultsId !== ""? (<Link to={`/results/${resultsId}`}><button className="px-10 mx-5 bg-gradient-to-tr from-green-600 to-green-900 text-indigo-100 py-2 rounded-md text-lg tracking-wide">Results</button></Link>): ""}
             </div>
         </nav>
     );

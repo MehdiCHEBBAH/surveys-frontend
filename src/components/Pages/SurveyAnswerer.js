@@ -1,45 +1,47 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FaArrowLeft, FaPlus, FaTimes } from 'react-icons/fa';
 
 import NavBar from '../NavBar';
 import Section from '../Section';
 
-import { FaArrowLeft, FaPlus, FaTimes } from 'react-icons/fa';
+const { BACKEND_HOST } = require('../../config.json');
+/************** Survey Functions *******************/
+const onSubmit = () => {
 
-    /************** Survey Functions *******************/
-    const onSubmit = () => {
-
-    }
-    /****************************************************************/
+}
+/****************************************************************/
 
 function SurveyAnswerer(props) {
+    const { id } = useParams();
+
     const [survey, setSurvey] = useState({
-        "ID": "af84b5aa-35ce-4be5-8a86-81d46befaea6",
-        "title": "Survey title",
-        "description": "Survey description",
+        "ID": "",
+        "title": "",
+        "description": "",
         "questions": {
             "0": {
-                "0": "first question",
-                "sectionTitle": "This is the first section"
-            },
-            "1": {
-                "0": "first question",
-                "1": "second question",
-                "2": "Third question",
-                "3": "Fourth question",
-                "sectionTitle": "This is the second section"
-            },
-            "2": {
-                "0": "first question",
-                "1": "another question",
-                "sectionTitle": "This is the second three"
+                "0": "",
+                "sectionTitle": ""
             }
         },
-        "createdAt": "2022-01-22T14:55:20.478Z",
-        "sharedURL": "/api/v0/surveys/af84b5aa-35ce-4be5-8a86-81d46befaea6"
+        "createdAt": "",
+        "sharedURL": ""
     });
+
+    const [answers, setAnswers] = useState()
+
+    useEffect(() => {
+        const getData = async () => {
+            let data = await axios.get(`${BACKEND_HOST}/api/v0/surveys/${id}`);
+            data = await data.data;
+            setSurvey({ ...data });
+
+        }
+        getData()
+    })
 
     const onSubmit = () => {
 
@@ -49,7 +51,7 @@ function SurveyAnswerer(props) {
         <div>
 
             {/* Nav Bar */}
-            <NavBar onClickSend={onSubmit} resultsId={'sakdak'} />
+            <NavBar onSubmit={onSubmit} resultsId={survey.ID} />
 
             {/* Rest of page */}
             <div className="bg-gradient-to-br from-blue-600 to-indigo-600 flex justify-center items-center w-full py-20">
@@ -65,14 +67,16 @@ function SurveyAnswerer(props) {
                                 <label className="block flex justify-center">
                                     <p className='text-center text-gray-800 bg-transparent mt-4 block w-4/5'>{survey.description}</p>
                                 </label>
+
+                                <label className="block flex justify-center">
+                                    <input title="Use this to share the survey" value={survey.ID} disabled className='text-center text-gray-800 h-10 mt-4 bg-white rounded-full max-w-md block w-4/5'/>
+                                </label>
+
                             </div>
 
                             {Object.keys(survey.questions).map((key) => (
-                                <Section key={`section_${key}`} data={survey.questions[key]} />
+                                <Section key={key} data={{ id: key, questions: { ...survey.questions[key] }}} />
                             ))}
-
-
-
 
                         </div>
 
