@@ -88,6 +88,7 @@ function SurveyResults(props) {
                 console.log(err)
             }
 
+            console.log(survey)
 
         }
         getData()
@@ -104,6 +105,9 @@ function SurveyResults(props) {
                             {/* Survey title + description */}
                             <div className='container mb-10'>
                                 <label className="block text-center">
+                                    <h1 className='bg-transparent text-center text-xl font-semibold text-gray-800'>{`${survey.answers[0][0]["true"]+survey.answers[0][0]["true"]} Responses`}</h1>
+                                </label>
+                                <label className="block text-center">
                                     <h1 className='bg-transparent text-center text-3xl font-semibold text-gray-800'>{survey.title}</h1>
                                 </label>
                                 <label className="block flex justify-center">
@@ -117,32 +121,32 @@ function SurveyResults(props) {
                             </div>
 
                             {
-                            survey.answers[0][0]['true'] != 0 || survey.answers[0][0]['false'] != 0 ? 
-                            <>
-                            {Object.keys(survey.questions).map((key) => (
-                                <div className="max-w-3xl mx-auto sm:px-6 lg:px-8">
-                                    <div className="bg-gradient-to-b from-slate-200 to-slate-100 overflow-hidden shadow-xl rounded-lg">
-                                        <div className="px-6 py-4 border-gray-200 font-bold uppercase">
-                                            <h2 className='bg-transparent text-xl font-semibold text-gray-900'>{survey.questions[key].sectionTitle}</h2>
-                                        </div>
+                                survey.answers[0][0]['true'] != 0 || survey.answers[0][0]['false'] != 0 ?
+                                    <>
+                                        {Object.keys(survey.questions).map((key) => (
+                                            <div className="max-w-3xl mx-auto sm:px-6 lg:px-8">
+                                                <div className="bg-gradient-to-b from-slate-200 to-slate-100 overflow-hidden shadow-xl rounded-lg">
+                                                    <div className="px-6 py-4 border-gray-200 font-bold uppercase">
+                                                        <h2 className='bg-transparent text-xl font-semibold text-gray-900'>{survey.questions[key].sectionTitle}</h2>
+                                                    </div>
 
-                                        <div className="p-6 border-gray-200">
-                                            {
-                                                Object.keys(survey.questions[key]).map((idx) => (
-                                                    idx != 'sectionTitle' && <QuestionResults key={idx} data={{ question: survey.questions[key][idx], results: survey.answers[key][idx] }} />
-                                                ))
-                                            }
+                                                    <div className="p-6 border-gray-200">
+                                                        {
+                                                            Object.keys(survey.questions[key]).map((idx) => (
+                                                                idx != 'sectionTitle' && <QuestionResults key={idx} data={{ question: survey.questions[key][idx], results: survey.answers[key][idx] }} />
+                                                            ))
+                                                        }
 
-                                        </div>
+                                                    </div>
 
 
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </> :
+                                    <div>
+                                        <Empty />
                                     </div>
-                                </div>
-                            ))}
-                            </> : 
-                            <div>
-                                <Empty/>
-                            </div>
                             }
 
                         </div>

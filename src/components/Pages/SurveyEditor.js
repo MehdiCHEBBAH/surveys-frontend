@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import axios from 'axios';
-import { FaArrowLeft, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaPassport, FaPlus, FaTimes } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
 
 import NavBar from '../NavBar';
@@ -73,22 +73,30 @@ function SurveyEditor(props) {
             return
         }
         
-        survey.questions.forEach(sec=>{
-            if(sec.title == ''){
-                alert("Section title can't be empty");
-                return
-            }
-            sec.questions.forEach(qst=>{
-                if(qst==''){
-                    alert("Question can't be empty");
-                    return
+        try{
+            survey.questions.forEach(sec=>{
+                if(sec.title == ''){
+                    alert("Section title can't be empty");
+                    throw "";
+    
                 }
+                sec.questions.forEach(qst=>{
+                    if(qst==''){
+                        alert("Question can't be empty");
+                        throw "";
+                    }
+                })
             })
-        })
+    
+        }catch(err){
+            return
+        }
+
 
         try{
             let data = await axios.post(`${BACKEND_HOST}/api/v0/surveys`, survey);
             data = await data.data;
+            alert('Your survey was created sucessfully');
             navigate(`/survey/${data.ID}`);
         }catch(err){
             alert("An internal error just happened!!");
