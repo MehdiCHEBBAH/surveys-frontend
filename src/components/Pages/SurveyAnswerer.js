@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaArrowLeft, FaPlus, FaTimes } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 import NavBar from '../NavBar';
 import Section from '../Section';
@@ -16,6 +17,7 @@ const onSubmit = () => {
 
 function SurveyAnswerer(props) {
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const [survey, setSurvey] = useState({
         "ID": "",
@@ -31,27 +33,51 @@ function SurveyAnswerer(props) {
         "sharedURL": ""
     });
 
-    const [answers, setAnswers] = useState()
-
     useEffect(() => {
         const getData = async () => {
             let data = await axios.get(`${BACKEND_HOST}/api/v0/surveys/${id}`);
             data = await data.data;
-            setSurvey({ ...data });
 
+            let answers = JSON.parse(JSON.stringify(data.questions));
+
+            for(let sec in answers){
+                delete answers[sec].sectionTitle;
+                for(let qst in answers[sec]){
+                    answers[sec][qst] = false;
+                }
+            }
+
+            setSurvey({ ...data, answers });
         }
         getData()
-    })
+    }, [])
 
-    const onSubmit = () => {
+    const toggleAnswer = (sectionId, questionId, value)=>{
+        let new_survey = JSON.parse(JSON.stringify(survey));
+        new_survey.answers[sectionId][questionId] = value;
+        setSurvey({...new_survey});
+    }
 
+
+    const sendData = async () => {
+        try{
+            let data = await axios.put(
+                `${BACKEND_HOST}/api/v0/surveys/${id}`,
+                survey.answers
+            );
+            data = await data.data;
+            alert("Congrates, You submited your responses.");
+            navigate(`/results/${id}`);
+        }catch(err){
+            alert("An error Just happened, please try again!!")
+        }
     }
 
     return (
         <div>
 
             {/* Nav Bar */}
-            <NavBar onSubmit={onSubmit} resultsId={survey.ID} />
+            <NavBar onSubmit={sendData} resultsId={survey.ID} />
 
             {/* Rest of page */}
             <div className="bg-gradient-to-br from-blue-600 to-indigo-600 flex justify-center items-center w-full py-20">
@@ -75,7 +101,11 @@ function SurveyAnswerer(props) {
                             </div>
 
                             {Object.keys(survey.questions).map((key) => (
-                                <Section key={key} data={{ id: key, questions: { ...survey.questions[key] }}} />
+                                <Section 
+                                        key={key} 
+                                        data={{ id: key, questions: { ...survey.questions[key] } }} 
+                                        toggleAnswer={toggleAnswer}        
+                                />
                             ))}
 
                         </div>

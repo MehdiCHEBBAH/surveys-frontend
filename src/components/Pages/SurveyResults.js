@@ -91,7 +91,7 @@ function SurveyResults(props) {
 
         }
         getData()
-    })
+    }, [])
     return (
         <div>
 
